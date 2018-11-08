@@ -18,49 +18,91 @@ from sklearn.cross_validation import train_test_split
 #
 #
 #postcondition: value at x is returned
-def Guassian_Partial_Pivot(matrix_A):
-  sum=0
-  count=len(matrix_A)
-  print(count)
+def Guassian_Partial_Pivot(df_A,list_rowmax):
+  
+  numRows=df_A.shape[0] 
+  numcol=df_A.shape[1]
+  pivots=[]
+  # get max rows
+  list_rowmax = Row_abs_max(df_A)
+  # forward elimination
+  GPP_forward(df_A,list_rowmax)
+  
+  # back subsitution
   # for i in range(count-1):
     # loop
 
+def Row_abs_max(df_A):
+  numRows=df_A.shape[0] 
+  numcol=df_A.shape[1]
+  list_r=[]
+  for r in range(numRows):
+      maxv=0
+      for c in range(numcol-1):
+          value=df_A.iloc[r,c] #
+          print('value:',value)
+          value=abs(value)
+          if(value>maxv):
+              maxv=value
+              print('maxv:',maxv)
+      list_r.append(maxv)
+  print('list_r:',list_r)
+  return list_r
 
-def GPP_forward(matrix_A,vec_rowmax):
-  sum=0
-  count=len(poly_coef)
-  for i in range(count-1):
-    sum = (sum+poly_coef[i])*x
-  return sum + poly_coef[count-1]
+def partialPivotRow(df_A,list_rowmax,row,const_col):
+  numRows=df_A.shape[0] 
+  numcol=df_A.shape[1] 
+  c=const_col 
+  value= df_A.iloc[r,c]
+  maxv = abs(value/list_rowmax[r])
+  pivot_index = row
+  for r in range(row,numRows):
+    value=df_A.iloc[r,c]
+    value=abs(value/list_rowmax[r])
+    if(value>maxv):
+        pivot_index=r
+        maxv=value  
+  return pivot_index
+    
+def GPP_forward(df_A,list_rowmax):
+ 
+ numRows=df_A.shape[0] 
+ numcol=df_A.shape[1]
+ 
 
 #precondiotion:
 #
 #postcondition:
-def Guassian_Elimination(poly_coef,x):
-  sum=0
-  count=len(poly_coef)
-  for i in range(count-1):
-    sum = (sum+poly_coef[i])*x
-  return sum + poly_coef[count-1]
+#def Guassian_Elimination(poly_coef,x):
+
 
 
 
 #----- Question 1 Write a code to solve it by Gaussian elimination  ------
 #             with scaled partial pivoting. Carry out the calculation
 #             with four decimal places.
- #EQ1 = 0.4096 0.1234 0.3678 0.2943 0.4043
- #EQ2 = 0.2246 0.3872 0.4015 0.1129 0.1550
- #EQ3 = 0.3645 0.1920 0.3781 0.0643 0.4240
- #EQ4 = 0.1784 0.4002 0.2786 0.3927 0.2557
-#  matrix_A= [ 0.4096, 0.1234, 0.3678, 0.2943, 0.4043],
-# [ 0.2246, 0.3872, 0.4015, 0.1129, 0.1550],
-# [ 0.3645, 0.1920, 0.3781, 0.0643, 0.4240],
-# [0.1784 ,0.4002 ,0.2786 ,0.3927 ,0.2557]
+df_A=pd.read_csv('matrixA.csv')  #import the data set
+list_rowmax=[]
+list_rowmax = Row_abs_max(df_A)
+Guassian_Partial_Pivot(df_A,list_rowmax)
+v= partialPivot(df_A,list_rowmax,1,0)
+print('v',v)
 
-data=pd.read_csv('matrixA.csv')  #import the data set
+
+
+
+
+
+
+
+
+
+
+
+
 # Guassian_Partial_Pivot(matrix_A)
 #----------- Question 2 ----------
-matrix_B=[0.3840, 0.5124, 0.7890, 1.2718, 0.5432, 0.8774, 0.9125],
+df_B=[0.3840, 0.5124, 0.7890, 1.2718, 0.5432, 0.8774, 0.9125],
 [-0.1127, 0.0358, 0.4230, 0.2879, 0.3750, 0.1248],
 [2.3715, 0.7887, -4.5612, 3.6233, 0.7819, -2.1352, 0.1435]
 
