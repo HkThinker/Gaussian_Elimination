@@ -26,10 +26,10 @@ def Guassian_Partial_Pivot(df_A,list_rowmax):
   GPP_forward(df_A,list_rowmax)
   
   # back subsitution
-  # for i in range(count-1):
-    # loop
+  BackSub(df_A)
 
-def Row_abs_max(df_A):
+
+def Row_abs_max(df_A):#tested and working
   numRows=df_A.shape[0] 
   numcol=df_A.shape[1]
   list_r=[]
@@ -78,7 +78,13 @@ def GPP_forward(df_a,list_rowmax):
      for c  in range(c_p,numcol-1): #apply elimination factor to every col in row starting at col pivot
          pivotvalue = df_A.iloc[r_p,c].copy * f
          df_A.iloc[r,c]-=pivotvalue
-
+def BackSub(df_a): 
+  sol=[] 
+  numrows=df_a.shape[0] 
+  numcows=df_a.shape[1] 
+   
+  #for r in range(numrows): 
+    
 
 def DF_RowSwap(df_a,r1,r2):
   temp = df_a.iloc[r1].copy()
@@ -102,8 +108,9 @@ def DF_and_list_RowSwap(df_a,r1,r2,l_a):
 df_A=pd.read_csv('matrixA.csv')  #import the data set
 list_rowmax=[]
 list_rowmax = Row_abs_max(df_A)
-Guassian_Partial_Pivot(df_A,list_rowmax)
-
+row=1
+col=1
+partialPivotRow(df_A,list_rowmax,row,col) #current bug
 
 
 
