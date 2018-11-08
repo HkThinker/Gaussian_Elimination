@@ -19,10 +19,7 @@ from sklearn.cross_validation import train_test_split
 #
 #postcondition: value at x is returned
 def Guassian_Partial_Pivot(df_A,list_rowmax):
-  
-  numRows=df_A.shape[0] 
-  numcol=df_A.shape[1]
-  pivots=[]
+  list_rowmax.clear
   # get max rows
   list_rowmax = Row_abs_max(df_A)
   # forward elimination
@@ -48,28 +45,49 @@ def Row_abs_max(df_A):
       list_r.append(maxv)
   print('list_r:',list_r)
   return list_r
-
-def partialPivotRow(df_A,list_rowmax,row,const_col):
+#precondition:
+  #list_rowmax= list of abs values with indexs maping to df_a rows
+  #
+#postcondition:
+  
+def partialPivotRow(df_A,list_rowmax,row,c):
   numRows=df_A.shape[0] 
-  numcol=df_A.shape[1] 
-  c=const_col 
-  value= df_A.iloc[r,c]
-  maxv = abs(value/list_rowmax[r])
+ 
+  value= df_A.iloc[row,c].copy
+  maxv = abs(value/list_rowmax[row])
   pivot_index = row
   for r in range(row,numRows):
     value=df_A.iloc[r,c]
     value=abs(value/list_rowmax[r])
     if(value>maxv):
-        pivot_index=r
-        maxv=value  
+        pivot_index=r, maxv=value
+  
   return pivot_index
     
-def GPP_forward(df_A,list_rowmax):
- 
- numRows=df_A.shape[0] 
+def GPP_forward(df_a,list_rowmax):
+ # row of pivot, col of pivot =r_p,c_p
+ numRows=df_A.shape[0]-1
  numcol=df_A.shape[1]
- 
+ for r_p in range(numRows): #for every diagnol
+   c_p=r_p
+   pivotrow=partialPivotRow(df_A,list_rowmax,r_p,c_p) #find pivot row
+   if(pivotrow!=r_p):                     #if pivot row is not in diagnol swap
+     DF_and_list_RowSwap(df_a,r_p,pivotrow,list_rowmax)
+   for r in range(r_p+1, numRows-1): #for every row after the pivot row
+     f =df_A.iloc[r,c_p].copy/df_A.iloc[r_p,c_p].copy; # get elimination factor of col 
+     for c  in range(c_p,numcol-1): #apply elimination factor to every col in row starting at col pivot
+         pivotvalue = df_A.iloc[r_p,c].copy * f
+         df_A.iloc[r,c]-=pivotvalue
 
+
+def DF_RowSwap(df_a,r1,r2):
+  temp = df_a.iloc[r1].copy()
+  df_a.iloc[r1] = df_a.iloc[r2]
+  df_a.iloc[r2] = temp
+def DF_and_list_RowSwap(df_a,r1,r2,l_a):
+ DF_RowSwap(df_a,r1,r2)
+ l_a[r1], l_a[r2] = l_a[r2], l_a[r1]
+ 
 #precondiotion:
 #
 #postcondition:
@@ -85,8 +103,8 @@ df_A=pd.read_csv('matrixA.csv')  #import the data set
 list_rowmax=[]
 list_rowmax = Row_abs_max(df_A)
 Guassian_Partial_Pivot(df_A,list_rowmax)
-v= partialPivot(df_A,list_rowmax,1,0)
-print('v',v)
+
+
 
 
 
